@@ -1,14 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>AI Chat App</title>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.29.9.js"></script>
 </head>
 <body>
-    <h1>hello world</h1>
-    <h1>111111</h1>
-    <h1>test</h1>
-    <h1>깃 테스트 입니다.</h1>
+    <h1>AI 채팅 앱</h1>
+    <div id="chat"></div>
+    <input id="message" type="text" placeholder="메시지를 입력하세요">
+    <button onclick="sendMessage()">전송</button>
+
+    <script>
+        const pubnub = new PubNub({
+            publishKey: 'your_pubnub_publish_key',
+            subscribeKey: 'your_pubnub_subscribe_key',
+        });
+
+        pubnub.subscribe({ channels: ['chat'] });
+
+        pubnub.addListener({
+            message: function(event) {
+                const chat = document.getElementById('chat');
+                chat.innerHTML += `<p>${event.message.user}: ${event.message.text}</p>`;
+            }
+        });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+
+            fetch('/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message }),
+            });
+
+            messageInput.value = '';
+        }
+    </script>
 </body>
 </html>
