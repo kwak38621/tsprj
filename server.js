@@ -1,3 +1,10 @@
+/*
+OPENAI_API_KEY=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
+PUBNUB_PUBLISH_KEY=pub-c-a2c20750-f88f-4fa2-9b3a-569485cc09f1
+PUBNUB_SUBSCRIBE_KEY=sub-c-8af242ae-680e-4a6b-bcfa-077e49042e76
+*/
+
+
 const express = require('express');
 const PubNub = require('pubnub');
 const { Configuration, OpenAIApi } = require('openai');
