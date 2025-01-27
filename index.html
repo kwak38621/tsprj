@@ -8,38 +8,50 @@
 </head>
 <body>
     <h1>AI 채팅 앱</h1>
-    <div id="chat"></div>
+    <div id="chat" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;"></div>
     <input id="message" type="text" placeholder="메시지를 입력하세요">
     <button onclick="sendMessage()">전송</button>
 
     <script>
         const pubnub = new PubNub({
-            publishKey: 'your_pubnub_publish_key',
-            subscribeKey: 'your_pubnub_subscribe_key',
+            publishKey: 'pub-c-a2c20750-f88f-4fa2-9b3a-569485cc09f1',
+            subscribeKey: 'sub-c-8af242ae-680e-4a6b-bcfa-077e49042e76',
+            userId: 'user1'
         });
-
+    
         pubnub.subscribe({ channels: ['chat'] });
-
+    
         pubnub.addListener({
             message: function(event) {
                 const chat = document.getElementById('chat');
                 chat.innerHTML += `<p>${event.message.user}: ${event.message.text}</p>`;
+                chat.scrollTop = chat.scrollHeight; // 스크롤을 맨 아래로
             }
         });
-
-        function sendMessage() {
+    
+        async function sendMessage() {
             const messageInput = document.getElementById('message');
             const message = messageInput.value;
-
-            fetch('/message', {
+    
+            if (message.trim() === '') {
+                return; // 빈 메시지 전송 방지
+            }
+    
+            // 사용자 메시지 UI에 추가
+            const chat = document.getElementById('chat');
+            chat.innerHTML += `<p>사용자: ${message}</p>`;
+            chat.scrollTop = chat.scrollHeight; // 스크롤을 맨 아래로
+    
+            // 서버에 메시지 전송
+            await fetch('/message', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ message }),
             });
-
-            messageInput.value = '';
+    
+            messageInput.value = ''; // 입력 필드 초기화
         }
     </script>
 </body>
